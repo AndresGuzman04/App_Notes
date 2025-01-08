@@ -16,5 +16,11 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.4",
     "nodemon": "^3.1.7"
+  },
+  "devDependencies": {
+    "standart": "^6.1.0"
+  },
+  "eslintConfig": {
+    "extends": "standard"
   }
 }
