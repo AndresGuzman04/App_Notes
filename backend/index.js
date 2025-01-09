@@ -204,8 +204,20 @@ app.get('/get-all-notes', authenticateToken, async (req, res) => {
 app.get('/get-note/:noteId', authenticateToken, async (req, res) => {
   const {user} = req.user
   const noteId = req.params.noteId
-  const note = await Note.findOne({ _id: noteId, userId: user._id })
-  return res.json(note)
+
+  try {
+    const note = await Note.findOne({ _id: noteId, userId: user._id })
+    return res.json({
+      error: false,
+      note,
+      message: 'Note retrieved successfully'
+    })
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      message: 'Internal server error'
+    })
+  }
 })
 
 const PORT = process.env.PORT || 3000
