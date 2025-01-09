@@ -183,6 +183,19 @@ app.put('/edit-note/:noteId', authenticateToken, async (req, res) => {
   }
 })
 
+app.get('/get-all-notes', authenticateToken, async (req, res) => {
+  const {user} = req.user
+  const notes = await Note.find({userId: user._id}).sort({createdAt: -1})
+  return res.json(notes)
+})
+
+app.get('/get-note/:noteId', authenticateToken, async (req, res) => {
+  const {user} = req.user
+  const noteId = req.params.noteId
+  const note = await Note.findOne({ _id: noteId, userId: user._id })
+  return res.json(note)
+})
+
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`)
