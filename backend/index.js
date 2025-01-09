@@ -224,7 +224,7 @@ app.delete('/delete-note/:noteId', authenticateToken, async (req, res) => {
   const {user} = req.user
   const noteId = req.params.noteId
   try {
-    const note =  await Note.findOne({ _id: noteId, userId: user._id })
+    const note = await Note.findOne({ _id: noteId, userId: user._id })
 
     if (!note) {
       return res.status(404).json({
@@ -238,6 +238,41 @@ app.delete('/delete-note/:noteId', authenticateToken, async (req, res) => {
     return res.json({
       error: false,
       message: 'Note deleted successfully'
+    })
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      message: 'Internal server error'
+    })
+  }
+})
+
+app.put('/edit-isPinned/:noteId', authenticateToken, async (req, res) => {
+  const noteId = req.params.noteId
+  const { isPinned } = req.body
+  const {user} = req.user
+
+  try {
+    const note = await Note.findOne({_id: noteId, userId: user._id})
+    if (!note) {
+      return res.status(404).json({message: 'Note not found'})
+    }
+
+    if (!isPinned) {
+      return res.status(500).json({
+        error: true,
+        message: 'Is Pinned must be a boolean value'
+      })
+    }
+
+    note.isPinned = isPinned
+
+    await note.save()
+
+    return res.json({
+      error: false,
+      note,
+      message: 'Note updated successfully'
     })
   } catch (error) {
     return res.status(500).json({
