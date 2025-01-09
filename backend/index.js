@@ -185,8 +185,20 @@ app.put('/edit-note/:noteId', authenticateToken, async (req, res) => {
 
 app.get('/get-all-notes', authenticateToken, async (req, res) => {
   const {user} = req.user
-  const notes = await Note.find({userId: user._id}).sort({createdAt: -1})
-  return res.json(notes)
+
+  try {
+    const notes = await Note.find({userId: user._id}).sort({isPinned: -1})
+    return res.json({
+      error: false,
+      notes,
+      message: 'Notes retrieved successfully'
+    })
+  } catch (error) {
+    return res.status(500).json({
+      error: true,
+      message: 'Internal server error'
+    })
+  }
 })
 
 app.get('/get-note/:noteId', authenticateToken, async (req, res) => {
