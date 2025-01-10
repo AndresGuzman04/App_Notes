@@ -9,20 +9,16 @@ const User = require('./models/user.model')
 const Note = require('./models/note.model')
 
 const express = require('express')
-const cors = require('cors')
 const app = express()
 
 const jwt = require('jsonwebtoken')
 const {authenticateToken} = require('./utilities')
+const { corsMiddleware } = require('./middlewares/cors')
 
 app.use(express.json())
 
-app.use(
-    cors({
-      origin: ['+'],
-      credentials: true
-    })
-)
+app.use(corsMiddleware())
+
 app.get('/', (req, res) => {
   res.json({data: 'Hello'})
 })
