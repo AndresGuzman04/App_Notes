@@ -29,9 +29,9 @@ app.get('/', (req, res) => {
 
 // Create account
 app.post('/create-account', async (req, res) => {
-  const {name, email, password} = req.body
+  const {fullName, email, password} = req.body
 
-  if (!name) {
+  if (!fullName) {
     return res
         .status(400)
         .json({error: true, message: 'Please enter your full name'})
@@ -59,7 +59,7 @@ app.post('/create-account', async (req, res) => {
   }
 
   const user = new User({
-    name,
+    fullName,
     email,
     password
   })
@@ -111,6 +111,25 @@ app.post('/login', async (req, res) => {
       message: 'Invalid email or password'
     })
   }
+})
+
+// Get User
+app.get('/get-user', authenticateToken, async (req, res) => {
+  const {user} = req.user
+
+  const isUser = await User.findOne({ _id: user._id })
+  if (!isUser) {
+    return res.status(401).json({message: 'User not found'})
+  }
+  return res.json({
+    user: {
+      fullName: isUser.fullName,
+      email: isUser.email,
+      _id: isUser._id,
+      createdOn: isUser.createdOn
+    },
+    message: 'User found successfully'
+  })
 })
 
 app.post('/add-note', authenticateToken, async (req, res) => {
